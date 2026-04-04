@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lexara — Document Analysis API</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e; --ink-soft: #3d3d5c; --ink-muted: #8888aa;
+    --paper: #f7f5f0; --paper-warm: #eeeae0; --paper-card: #ffffff;
+    --accent: #e8642a; --accent-light: #fdf0e8;
+    --green: #1db87a; --green-light: #e8faf3;
+    --red: #e82a2a; --red-light: #fde8e8;
+    --border: #ddd9ce;
+    --shadow: 0 2px 20px rgba(26,26,46,0.08);
+    --radius: 14px; --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(232,100,42,0.06) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(42,125,232,0.06) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%231a1a2e' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* NAV */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(247,245,240,0.9); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-icon { width: 36px; height: 36px; background: var(--ink); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .logo-text { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); letter-spacing: -0.5px; }
+  .logo-text span { color: var(--accent); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-link {
+    font-size: 13px; font-weight: 500; color: var(--ink-soft);
+    text-decoration: none; padding: 6px 14px; border-radius: 8px;
+    transition: all 0.18s; border: 1px solid transparent;
+  }
+  .nav-link:hover { background: var(--paper-warm); color: var(--ink); }
+  .nav-link.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .header-badge {
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+    background: var(--green-light); color: var(--green);
+    border: 1px solid rgba(29,184,122,0.25);
+    padding: 4px 10px; border-radius: 20px; letter-spacing: 0.5px;
+  }
+
+  /* HERO */
+  .hero { position: relative; z-index: 1; padding: 72px 48px 48px; max-width: 960px; margin: 0 auto; }
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--accent);
+    margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+  }
+  .hero-eyebrow::before { content: ''; display: block; width: 24px; height: 2px; background: var(--accent); }
+  h1 { font-family: 'DM Serif Display', serif; font-size: clamp(40px, 5vw, 62px); line-height: 1.05; letter-spacing: -2px; margin-bottom: 20px; }
+  h1 em { font-style: italic; color: var(--accent); }
+  .hero-sub { font-size: 17px; line-height: 1.6; color: var(--ink-soft); max-width: 520px; font-weight: 300; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+  .pill { font-family: 'DM Mono', monospace; font-size: 12px; background: var(--paper-card); border: 1px solid var(--border); color: var(--ink-soft); padding: 6px 14px; border-radius: 20px; }
+
+  /* LAYOUT */
+  .main { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 0 48px 80px; display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
+
+  /* CARD */
+  .card { background: var(--paper-card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .card-header { padding: 24px 28px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-family: 'DM Serif Display', serif; font-size: 20px; letter-spacing: -0.5px; }
+  .method-badge { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 6px; letter-spacing: 1px; }
+  .method-post { background: var(--accent-light); color: var(--accent); border: 1px solid rgba(232,100,42,0.2); }
+  .method-get { background: var(--green-light); color: var(--green); border: 1px solid rgba(29,184,122,0.2); }
+
+  /* FORM */
+  .form-body { padding: 28px; display: flex; flex-direction: column; gap: 20px; }
+  .field-group { display: flex; flex-direction: column; gap: 6px; }
+  label { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; }
+  label .req { color: var(--accent); font-size: 14px; line-height: 1; }
+  input { font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); background: var(--paper); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; width: 100%; outline: none; transition: border-color 0.18s, box-shadow 0.18s; }
+  input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(232,100,42,0.1); background: #fff; }
+  .field-hint { font-size: 12px; color: var(--ink-muted); }
+
+  .drop-zone { border: 2px dashed var(--border); border-radius: var(--radius-sm); padding: 28px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--paper); }
+  .drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: var(--accent-light); }
+  .drop-icon { font-size: 28px; margin-bottom: 8px; }
+  .drop-label { font-size: 14px; color: var(--ink-soft); }
+  .drop-label strong { color: var(--accent); font-weight: 600; }
+  .drop-types { margin-top: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--ink-muted); }
+  #file-input { display: none; }
+  .file-selected { display: none; align-items: center; gap: 10px; padding: 12px 16px; background: var(--green-light); border: 1px solid rgba(29,184,122,0.25); border-radius: var(--radius-sm); font-size: 13px; color: var(--green); margin-top: 8px; }
+  .file-selected.show { display: flex; }
+
+  .btn-primary {
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    color: #fff; background: var(--ink); border: none; border-radius: var(--radius-sm);
+    padding: 14px 28px; width: 100%; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    position: relative; overflow: hidden;
+  }
+  .btn-primary::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--accent), #c04515); opacity: 0; transition: opacity 0.2s; }
+  .btn-primary:hover::before { opacity: 1; }
+  .btn-primary span { position: relative; z-index: 1; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; position: relative; z-index: 1; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* SIDEBAR */
+  .sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 80px; }
+  .info-card { background: var(--paper-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow); }
+  .info-card-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
+  .endpoint-row { display: flex; align-items: center; gap: 8px; background: var(--paper); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 8px; }
+  .endpoint-row:last-child { margin-bottom: 0; }
+  .endpoint-method { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; padding: 3px 7px; border-radius: 4px; flex-shrink: 0; }
+  .endpoint-path { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink-soft); flex: 1; }
+  .endpoint-status { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(29,184,122,0.4); } 50% { box-shadow: 0 0 0 4px rgba(29,184,122,0); } }
+  .key-box { font-family: 'DM Mono', monospace; font-size: 12px; background: var(--paper); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; color: var(--ink-soft); word-break: break-all; margin-top: 4px; }
+
+  /* RESULT */
+  .result-card { display: none; margin-top: 20px; }
+  .result-card.show { display: block; animation: slideUp 0.35s cubic-bezier(0.16,1,0.3,1); }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .result-section { padding: 20px 28px; border-bottom: 1px solid var(--border); }
+  .result-section:last-child { border-bottom: none; }
+  .result-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-muted); margin-bottom: 10px; }
+  .result-summary { font-size: 14px; line-height: 1.65; color: var(--ink-soft); }
+  .sentiment-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; padding: 6px 16px; border-radius: 20px; }
+  .sentiment-badge.positive { background: var(--green-light); color: var(--green); }
+  .sentiment-badge.neutral { background: var(--paper-warm); color: var(--ink-soft); }
+  .sentiment-badge.negative { background: var(--red-light); color: var(--red); }
+  .entity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .entity-group { background: var(--paper); border-radius: var(--radius-sm); padding: 12px 14px; }
+  .entity-group-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--ink-muted); margin-bottom: 8px; }
+  .entity-tag { display: inline-block; font-size: 12px; background: var(--paper-card); border: 1px solid var(--border); color: var(--ink); padding: 3px 8px; border-radius: 4px; margin: 2px 2px 2px 0; font-family: 'DM Mono', monospace; }
+  .entity-empty { font-size: 12px; color: var(--ink-muted); font-style: italic; }
+
+  .error-box { display: none; background: var(--red-light); border: 1px solid rgba(232,42,42,0.2); border-radius: var(--radius-sm); padding: 14px 16px; font-size: 13px; color: var(--red); }
+  .error-box.show { display: block; }
+  .raw-toggle { font-size: 12px; color: var(--accent); cursor: pointer; background: none; border: none; font-family: 'DM Sans', sans-serif; font-weight: 600; padding: 0; }
+  .raw-json { display: none; font-family: 'DM Mono', monospace; font-size: 11px; background: var(--ink); color: #a8e6cf; border-radius: var(--radius-sm); padding: 16px; overflow: auto; max-height: 260px; line-height: 1.6; margin-top: 12px; }
+  .raw-json.show { display: block; }
+
+  footer { position: relative; z-index: 1; text-align: center; padding: 32px 48px; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-muted); font-family: 'DM Mono', monospace; }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 800px) {
+    header { padding: 0 16px; }
+    .hero, .main { padding-left: 16px; padding-right: 16px; }
+    .main { grid-template-columns: 1fr; }
+    .sidebar { position: static; }
+    h1 { font-size: 36px; }
+    .nav-link { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">📄</div>
+    <span class="logo-text">Lex<span>ara</span></span>
+  </div>
+  <div class="nav-right">
+    <a href="/" class="nav-link active">Analyser</a>
+    <a href="/tester" class="nav-link">Endpoint Tester</a>
+    <span class="header-badge" id="health-badge">● CHECKING...</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">Document Intelligence API</div>
+  <h1>Extract. Analyse.<br><em>Understand.</em></h1>
+  <p class="hero-sub">Upload any PDF, Word document, or image and instantly receive an AI-powered summary, named entities, and sentiment classification.</p>
+  <div class="pills">
+    <span class="pill">PDF</span><span class="pill">DOCX</span><span class="pill">PNG / JPG</span>
+    <span class="pill">Groq LLaMA 3.3-70B</span><span class="pill">FastAPI</span><span class="pill">REST</span>
+  </div>
+</section>
+
+<div class="main">
+  <div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Analyse Document</span>
+        <span class="method-badge method-post">POST</span>
+      </div>
+      <div class="form-body">
+        <div class="field-group">
+          <label>Document <span class="req">*</span></label>
+          <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+            <div class="drop-icon">📎</div>
+            <div class="drop-label"><strong>Click to upload</strong> or drag &amp; drop</div>
+            <div class="drop-types">PDF · DOCX · PNG · JPG · JPEG</div>
+          </div>
+          <input type="file" id="file-input" accept=".pdf,.docx,.png,.jpg,.jpeg">
+          <div class="file-selected" id="file-selected"><span>✓</span><span id="file-name-display">—</span></div>
+        </div>
+        <div class="field-group">
+          <label>API Key <span class="req">*</span></label>
+          <input type="text" id="api-key" value="sk_track2_987654321"/>
+          <span class="field-hint">Sent as x-api-key header</span>
+        </div>
+        <div class="field-group">
+          <label>Endpoint</label>
+          <input type="text" id="endpoint-url" value="http://localhost:8000/api/document-analyze"/>
+        </div>
+        <div class="error-box" id="error-box"></div>
+        <button class="btn-primary" id="analyze-btn" onclick="analyzeDocument()">
+          <div class="spinner" id="spinner"></div>
+          <span id="btn-label">✦ Analyse Document</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="card result-card" id="result-card">
+      <div class="card-header">
+        <span class="card-title">Analysis Result</span>
+        <button class="raw-toggle" onclick="toggleRaw()">{ } Raw JSON</button>
+      </div>
+      <div class="result-section">
+        <div class="result-label">Summary</div>
+        <div class="result-summary" id="result-summary">—</div>
+      </div>
+      <div class="result-section">
+        <div class="result-label">Sentiment</div>
+        <span class="sentiment-badge neutral" id="result-sentiment">→ Neutral</span>
+      </div>
+      <div class="result-section">
+        <div class="result-label">Named Entities</div>
+        <div class="entity-grid" id="entity-grid"></div>
+      </div>
+      <div class="result-section">
+        <div class="raw-json" id="raw-json"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="info-card">
+      <div class="info-card-title">⚡ Endpoints</div>
+      <div class="endpoint-row">
+        <span class="endpoint-method method-post">POST</span>
+        <span class="endpoint-path">/api/document-analyze</span>
+        <span class="endpoint-status"></span>
+      </div>
+      <div class="endpoint-row">
+        <span class="endpoint-method method-get">GET</span>
+        <span class="endpoint-path">/health</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">🔑 Authentication</div>
+      <div style="font-size:12px;color:var(--ink-muted);margin-bottom:6px;">x-api-key header</div>
+      <div class="key-box">sk_track2_987654321</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">🛠 Tech Stack</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--ink-soft)">Framework</span><span style="font-family:'DM Mono',monospace;font-size:12px;">FastAPI</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--ink-soft)">AI Model</span><span style="font-family:'DM Mono',monospace;font-size:12px;">LLaMA 3.3-70B</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--ink-soft)">Provider</span><span style="font-family:'DM Mono',monospace;font-size:12px;">Groq</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--ink-soft)">OCR</span><span style="font-family:'DM Mono',monospace;font-size:12px;">Tesseract</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--ink-soft)">PDF Parser</span><span style="font-family:'DM Mono',monospace;font-size:12px;">pdfplumber</span></div>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">📐 Response Schema</div>
+      <pre style="font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-soft);line-height:1.7;overflow:auto;">{
+  "status": "success",
+  "fileName": "...",
+  "summary": "...",
+  "entities": {
+    "names": [...],
+    "dates": [...],
+    "organizations": [...],
+    "amounts": [...]
+  },
+  "sentiment": "Positive"
+}</pre>
+    </div>
+    <div class="info-card" style="border-left: 3px solid var(--accent);">
+      <div class="info-card-title">🧪 Endpoint Tester</div>
+      <p style="font-size:13px;color:var(--ink-soft);line-height:1.6;margin-bottom:14px;">Use the GUVI Hackathon endpoint tester to validate your deployed API.</p>
+          <a href="/tester" style="display:block;text-align:center;background:var(--accent);color:#fff;font-weight:600;font-size:13px;padding:10px;border-radius:var(--radius-sm);text-decoration:none;">Open Endpoint Tester →</a>
+    </div>
+  </div>
+</div>
+
+<footer>Lexara · Document Analysis API · <a href="/tester">Endpoint Tester</a> · GUVI Hackathon 2026</footer>
+
+<script>
+  let selectedFile = null, rawVisible = false;
+
+  async function checkHealth() {
+    const badge = document.getElementById('health-badge');
+    try {
+      const res = await fetch('/health');
+      if (res.ok) {
+        badge.textContent = '● LIVE';
+        badge.style.cssText = 'background:var(--green-light);color:var(--green);border:1px solid rgba(29,184,122,0.25);font-family:DM Mono,monospace;font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;letter-spacing:0.5px;';
+      } else throw new Error();
+    } catch {
+      badge.textContent = '● OFFLINE';
+      badge.style.cssText = 'background:var(--red-light);color:var(--red);border:1px solid rgba(232,42,42,0.25);font-family:DM Mono,monospace;font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;letter-spacing:0.5px;';
+    }
+  }
+  checkHealth();
+
+  const dropZone = document.getElementById('drop-zone');
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
+  document.getElementById('file-input').addEventListener('change', e => { if (e.target.files[0]) setFile(e.target.files[0]); });
+
+  function setFile(file) {
+    selectedFile = file;
+    document.getElementById('file-name-display').textContent = `${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+    document.getElementById('file-selected').classList.add('show');
+  }
+  function getFileType(file) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (ext === 'pdf') return 'pdf';
+    if (ext === 'docx') return 'docx';
+    return 'image';
+  }
+  function toBase64(file) {
+    return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(file); });
+  }
+
+  async function analyzeDocument() {
+    const btn = document.getElementById('analyze-btn');
+    const spinner = document.getElementById('spinner');
+    const btnLabel = document.getElementById('btn-label');
+    const errorBox = document.getElementById('error-box');
+    errorBox.classList.remove('show');
+    if (!selectedFile) { showError('Please select a document to analyse.'); return; }
+    const apiKey = document.getElementById('api-key').value.trim();
+    const endpoint = document.getElementById('endpoint-url').value.trim();
+    if (!apiKey) { showError('API key is required.'); return; }
+    btn.disabled = true; spinner.style.display = 'block'; btnLabel.textContent = 'Analysing...';
+    try {
+      const base64 = await toBase64(selectedFile);
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey },
+        body: JSON.stringify({ fileName: selectedFile.name, fileType: getFileType(selectedFile), fileBase64: base64 })
+      });
+      const data = await res.json();
+      if (!res.ok) { showError(`Error ${res.status}: ${data.detail || 'Request failed'}`); return; }
+      renderResult(data);
+    } catch (err) {
+      showError(`Network error: ${err.message}`);
+    } finally {
+      btn.disabled = false; spinner.style.display = 'none'; btnLabel.textContent = '✦ Analyse Document';
+    }
+  }
+
+  function showError(msg) { const b = document.getElementById('error-box'); b.textContent = '⚠ ' + msg; b.classList.add('show'); }
+
+  function renderResult(data) {
+    document.getElementById('result-summary').textContent = data.summary || '—';
+    const sentEl = document.getElementById('result-sentiment');
+    const s = (data.sentiment || 'Neutral').toLowerCase();
+    sentEl.textContent = (s==='positive'?'↑':s==='negative'?'↓':'→') + ' ' + data.sentiment;
+    sentEl.className = 'sentiment-badge ' + s;
+    const e = data.entities || {};
+    document.getElementById('entity-grid').innerHTML = [
+      {label:'People',key:'names'},{label:'Dates',key:'dates'},
+      {label:'Organisations',key:'organizations'},{label:'Amounts',key:'amounts'}
+    ].map(g => {
+      const items = e[g.key] || [];
+      return `<div class="entity-group"><div class="entity-group-label">${g.label}</div>${items.length ? items.map(i=>`<span class="entity-tag">${i}</span>`).join('') : '<span class="entity-empty">None found</span>'}</div>`;
+    }).join('');
+    document.getElementById('raw-json').textContent = JSON.stringify(data, null, 2);
+    document.getElementById('result-card').classList.add('show');
+    document.getElementById('result-card').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function toggleRaw() { rawVisible = !rawVisible; document.getElementById('raw-json').classList.toggle('show', rawVisible); }
+</script>
+</body>
+</html>
