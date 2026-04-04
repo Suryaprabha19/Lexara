@@ -1,4 +1,4 @@
-# DocLens — AI-Powered Document Analysis API
+# Lexara: AI-Powered Document Analysis API
 
 > **GUVI Hackathon 2026** · Track 2 Submission
 
