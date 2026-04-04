@@ -1,0 +1,6 @@
+guvi-doc-analysis/
+├── src/
+│   └── main.py          # FastAPI app — extraction + AI analysis
+├── requirements.txt
+├── .env.example
+└── README.md
