@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 # Lexara — AI-Powered Document Analysis API
 
 > **GUVI Hackathon 2026** · Track 2 Submission
 
 An intelligent document processing system that extracts, analyses, and summarises content from **PDF**, **DOCX**, and **image** files. Powered by **Groq's LLaMA 3.3-70B**, it generates concise summaries, extracts named entities (people, dates, organisations, monetary amounts), and classifies document sentiment — all via a clean REST API with a Streamlit UI branded as **Lexara**.
+=======
+# Lexara: AI-Powered Document Analysis API
+
+> **GUVI Hackathon 2026** · Track 2 Submission
+
+An intelligent document processing system that extracts, analyses, and summarises content from **PDF**, **DOCX**, and **image** files. Powered by **Groq's LLaMA 3.3-70B**, it generates concise summaries, extracts named entities (people, dates, organisations, monetary amounts), and classifies document sentiment — all via a clean REST API with a Streamlit UI.
+>>>>>>> cd18bc59f56e9113b65e689ac94033891b493298
 
 ---
 
@@ -11,7 +19,11 @@ An intelligent document processing system that extracts, analyses, and summarise
 - 📄 **Multi-format support** — PDF, DOCX, PNG, JPG, JPEG
 - 🤖 **AI Analysis** — Summary, named entity extraction, sentiment classification
 - 🔐 **API Key Authentication** — Secure `x-api-key` header auth
+<<<<<<< HEAD
 - 🖥️ **Streamlit UI (Lexara)** — Professional light-themed interface with two pages:
+=======
+- 🖥️ **Streamlit UI** — Professional light-themed interface with two pages:
+>>>>>>> cd18bc59f56e9113b65e689ac94033891b493298
   - **Analyser** — Upload & analyse documents visually
   - **Endpoint Tester** — Validate your deployed API (GUVI hackathon tool)
 - ⚡ **FastAPI Backend** — High-performance async REST API
@@ -232,4 +244,8 @@ All requests to `/api/document-analyze` require the `x-api-key` header matching 
 ## AI Tools Used
 
 - **Groq — LLaMA 3.3-70B Versatile** — used for summary generation, entity extraction, and sentiment classification via the `groq` Python SDK.
+<<<<<<< HEAD
 - **Claude (claude.ai)** — used to assist in scaffolding the project structure, code, UI, and branding (Lexara).
+=======
+- **Claude (claude.ai)** — used to assist in scaffolding the project structure, code, and UI.
+>>>>>>> cd18bc59f56e9113b65e689ac94033891b493298

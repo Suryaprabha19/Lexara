@@ -1,6 +1,15 @@
+<<<<<<< HEAD
 .env
 .venv/
 venv/
+=======
+# Environment
+.env
+.venv/
+venv/
+
+# Python
+>>>>>>> cd18bc59f56e9113b65e689ac94033891b493298
 __pycache__/
 *.py[cod]
 *.pyo
@@ -9,7 +18,18 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+<<<<<<< HEAD
 .vscode/
 .idea/
 *.swp
 .streamlit/secrets.toml
+=======
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+>>>>>>> cd18bc59f56e9113b65e689ac94033891b493298

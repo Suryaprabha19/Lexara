@@ -367,7 +367,7 @@ if page == "📊 Analyser":
             elif not api_key:
                 st.error("⚠️ Please enter your API key in the sidebar.")
             else:
-                with st.spinner("Analysing document with Groq LLaMA 3.3-70B..."):
+                with st.spinner("Analysing document... (first request may take ~30s to wake the server)"):
                     uploaded.seek(0)
                     b64 = file_to_base64(uploaded)
                     payload = {
@@ -381,7 +381,7 @@ if page == "📊 Analyser":
                     }
                     try:
                         t0 = time.time()
-                        resp = requests.post(endpoint, json=payload, headers=headers, timeout=60)
+                        resp = requests.post(endpoint, json=payload, headers=headers, timeout=120)
                         elapsed = round((time.time() - t0) * 1000)
                         data = resp.json()
 
@@ -620,7 +620,7 @@ elif page == "🧪 Endpoint Tester":
                 t0 = time.time()
 
                 try:
-                    resp = requests.post(test_endpoint, json=payload, headers=headers, timeout=60)
+                    resp = requests.post(test_endpoint, json=payload, headers=headers, timeout=120)
                     elapsed = round((time.time() - t0) * 1000)
                     try:
                         data = resp.json()

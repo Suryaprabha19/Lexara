@@ -19,7 +19,11 @@ import pytesseract
 
 load_dotenv()
 
+<<<<<<< HEAD
 app = FastAPI(title="Lexara — Document Analysis API", version="1.0.0")
+=======
+app = FastAPI(title="Document Analysis API", version="1.0.0")
+>>>>>>> cd18bc59f56e9113b65e689ac94033891b493298
 
 # Serve static frontend
 static_dir = Path(__file__).parent / "static"
