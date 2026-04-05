@@ -1,7 +1,6 @@
 # Lexara — AI-Powered Document Analysis API
 
 An intelligent document processing system that extracts, analyses, and summarises content from **PDF**, **DOCX**, and **image** files. Powered by **Groq's LLaMA 3.3-70B**, it generates concise summaries, extracts named entities (people, dates, organisations, monetary amounts), and classifies document sentiment — all via a clean REST API with a Streamlit UI.
->>>>>>> cd18bc59f56e9113b65e689ac94033891b493298
 
 ---
 
