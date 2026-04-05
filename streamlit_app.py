@@ -265,7 +265,7 @@ with st.sidebar:
     st.markdown("""
     <div style="display:flex;align-items:center;gap:10px;padding:8px 0 24px;">
       <div style="width:38px;height:38px;background:#1a1a2e;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;">📄</div>
-      <span style="font-family:'DM Serif Display',serif;font-size:22px;color:#1a1a2e;letter-spacing:-0.5px;">Doc<span style="color:#e8642a;">Lens</span></span>
+      <span style="font-family:'DM Serif Display',serif;font-size:22px;color:#1a1a2e;letter-spacing:-0.5px;">Lex<span style="color:#e8642a;">ara</span></span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -279,8 +279,7 @@ with st.sidebar:
 
     # Endpoint config
     st.markdown("**⚙️ API Configuration**")
-    default_url = st.secrets.get("BACKEND_URL", "http://localhost:8000") if hasattr(st, "secrets") else "http://localhost:8000"
-    api_base = st.text_input("Base URL", value=default_url, label_visibility="collapsed", placeholder="http://localhost:8000")
+    api_base = st.text_input("Base URL", value="https://lexaraa.onrender.com", label_visibility="collapsed", placeholder="https://lexaraa.onrender.com")
     api_key  = st.text_input("API Key", value="sk_track2_987654321", type="password", label_visibility="collapsed")
 
     # Health
