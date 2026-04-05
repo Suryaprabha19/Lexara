@@ -279,7 +279,7 @@ with st.sidebar:
 
     # Endpoint config
     st.markdown("**⚙️ API Configuration**")
-    api_base = st.text_input("Base URL", value="http://localhost:8000", label_visibility="collapsed", placeholder="http://localhost:8000")
+    api_base = st.text_input("Base URL", value="https://lexaraa.onrender.com", label_visibility="collapsed", placeholder="https://lexaraa.onrender.com")
     api_key  = st.text_input("API Key", value="sk_track2_987654321", type="password", label_visibility="collapsed")
 
     # Health
