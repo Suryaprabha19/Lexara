@@ -6,7 +6,7 @@ import time
 
 # ── Page config ────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="DocLens · Document Analysis API",
+    page_title="Lexara · Document Analysis API",
     page_icon="📄",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -303,7 +303,7 @@ with st.sidebar:
     """)
 
     st.markdown("---")
-    st.caption("GUVI Hackathon 2026 · DocLens")
+    st.caption("GUVI Hackathon 2026 · Lexara")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
