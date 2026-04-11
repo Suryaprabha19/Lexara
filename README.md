@@ -222,14 +222,12 @@ All requests to `/api/document-analyze` require the `x-api-key` header matching 
 
 - Scanned PDFs without an embedded text layer return no text (OCR only applies to image-type uploads).
 - Documents are truncated to 8,000 characters before being sent to Groq.
-- Tesseract accuracy depends on image quality — low-resolution scans may produce noisy output.
+- Tesseract accuracy depends on image quality - low-resolution scans may produce noisy output.
 - The Streamlit UI and FastAPI server must be run as separate processes.
 
 ---
 
 ## AI Tools Used
 
-- **Groq — LLaMA 3.3-70B Versatile** — used for summary generation, entity extraction, and sentiment classification via the `groq` Python SDK.
-- **Claude (claude.ai)** — used to assist in scaffolding the project structure, code, UI, and branding (Lexara).
-- **Claude (claude.ai)** — used to assist in scaffolding the project structure, code, and UI.
-
+- **Groq — LLaMA 3.3-70B Versatile** - used for summary generation, entity extraction, and sentiment classification via the `groq` Python SDK.
+- **Claude (claude.ai)** - used to assist in scaffolding the project structure, code, UI, and branding (Lexara).
