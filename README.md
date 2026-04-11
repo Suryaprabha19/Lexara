@@ -1,19 +1,19 @@
-# Lexara — AI-Powered Document Analysis API
+# Lexara - AI-Powered Document Analysis API
 
-An intelligent document processing system that extracts, analyses, and summarises content from **PDF**, **DOCX**, and **image** files. Powered by **Groq's LLaMA 3.3-70B**, it generates concise summaries, extracts named entities (people, dates, organisations, monetary amounts), and classifies document sentiment — all via a clean REST API with a Streamlit UI.
+An intelligent document processing system that extracts, analyses, and summarises content from **PDF**, **DOCX**, and **image** files. Powered by **Groq's LLaMA 3.3-70B**, it generates concise summaries, extracts named entities (people, dates, organisations, monetary amounts), and classifies document sentiment - all via a clean REST API with a Streamlit UI.
 
 ---
 
 ## Features
 
-- 📄 **Multi-format support** — PDF, DOCX, PNG, JPG, JPEG
-- 🤖 **AI Analysis** — Summary, named entity extraction, sentiment classification
-- 🔐 **API Key Authentication** — Secure `x-api-key` header auth
-- 🖥️ **Streamlit UI** — Professional light-themed interface with two pages:
-  - **Analyser** — Upload & analyse documents visually
-  - **Endpoint Tester** — Validate your deployed API (GUVI hackathon tool)
-- ⚡ **FastAPI Backend** — High-performance async REST API
-- 🔍 **OCR Support** — Tesseract OCR for image-based documents
+- 📄 **Multi-format support** - PDF, DOCX, PNG, JPG, JPEG
+- 🤖 **AI Analysis** - Summary, named entity extraction, sentiment classification
+- 🔐 **API Key Authentication** - Secure `x-api-key` header auth
+- 🖥️ **Streamlit UI** - Professional light-themed interface with two pages:
+  - **Analyser** - Upload & analyse documents visually
+  - **Endpoint Tester** - Validate your deployed API (GUVI hackathon tool)
+- ⚡ **FastAPI Backend** - High-performance async REST API
+- 🔍 **OCR Support** - Tesseract OCR for image-based documents
 
 ---
 
