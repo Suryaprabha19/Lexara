@@ -202,7 +202,7 @@ All requests to `/api/document-analyze` require the `x-api-key` header matching 
 
 ---
 
-## Deployment (Render — Free Tier)
+## Deployment (Render - Free Tier)
 
 1. Push repo to GitHub (public).
 2. Create a new **Web Service** on [render.com](https://render.com) pointing to the repo.
@@ -230,8 +230,6 @@ All requests to `/api/document-analyze` require the `x-api-key` header matching 
 ## AI Tools Used
 
 - **Groq — LLaMA 3.3-70B Versatile** — used for summary generation, entity extraction, and sentiment classification via the `groq` Python SDK.
-<<<<<<< HEAD
 - **Claude (claude.ai)** — used to assist in scaffolding the project structure, code, UI, and branding (Lexara).
-=======
 - **Claude (claude.ai)** — used to assist in scaffolding the project structure, code, and UI.
->>>>>>> cd18bc59f56e9113b65e689ac94033891b493298
+
